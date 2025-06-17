@@ -1,0 +1,30 @@
+name: Ghost Tile
+
+on:
+  schedule:
+    - cron: '0 22 * * *' # Every day at 10pm UTC
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  run-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Git user
+        run: |
+          git config user.name "George Hajjar"
+          git config user.email "georgehajjar99@gmail.com"
+
+      - name: Run script
+        run: bash ./bot.sh
+
+      - name: Commit and push changes
+        run: |
+          git add -A
+          git diff --cached --quiet || git commit -m "Automated commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
