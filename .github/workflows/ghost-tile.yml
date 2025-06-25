@@ -2,8 +2,8 @@ name: Ghost Tile
 
 on:
   schedule:
-    - cron: '0 22 * * *' # Every day at 10pm UTC
-  workflow_dispatch: # Allows manual triggering
+    - cron: '0 */2 * * *' # Every 2 hours
+  workflow_dispatch:
 
 jobs:
   run-bot:
@@ -11,6 +11,14 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Random skip (50% chance)
+        run: |
+          # 50% chance to skip, so runs ~every 2-4 hours
+          if [ $((RANDOM % 2)) -eq 0 ]; then
+            echo "Skipping this run."
+            exit 0
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
